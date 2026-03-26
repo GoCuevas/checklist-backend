@@ -35,7 +35,16 @@ public class ChecklistService {
         boolean fallaCritica = items.stream()
                 .anyMatch(item -> item.isEsCritico() && item.getEstado().equalsIgnoreCase("FAIL"));
 
-        checklist.setEstadoFinal(fallaCritica ? "RECHAZADO" : "APROBADO");
+        if (fallaCritica) {
+            checklist.setEstadoFinal("RECHAZADO");
+            vehiculo.setHabilitado(false);
+        } else {
+            checklist.setEstadoFinal("APROBADO");
+            vehiculo.setHabilitado(true);
+        }
+
+        // guardar cambios en vehículo
+        vehiculoRepository.save(vehiculo);
 
         // 🔥 RELACIÓN BIEN HECHA
         for (ChecklistItem item : items) {

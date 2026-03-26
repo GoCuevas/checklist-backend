@@ -12,6 +12,7 @@ public class Vehiculo {
 
     private String patente;
     private String numeroInterno;
+    private boolean habilitado = true;
 
     // Constructor vacío (OBLIGATORIO)
     public Vehiculo() {}
@@ -35,5 +36,13 @@ public class Vehiculo {
 
     public void setNumeroInterno(String numeroInterno) {
         this.numeroInterno = numeroInterno;
+    }
+
+    public boolean isHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(boolean habilitado) {
+        this.habilitado = habilitado;
     }
 }

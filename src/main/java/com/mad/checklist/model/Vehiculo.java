@@ -13,6 +13,7 @@ public class Vehiculo {
     private String patente;
     private String numeroInterno;
     private boolean habilitado = true;
+    private String estado; // APROBADO / OBSERVADO / BLOQUEADO / NO_HABILITADO
 
     // Constructor vacío (OBLIGATORIO)
     public Vehiculo() {}
@@ -44,5 +45,13 @@ public class Vehiculo {
 
     public void setHabilitado(boolean habilitado) {
         this.habilitado = habilitado;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

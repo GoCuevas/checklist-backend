@@ -32,16 +32,32 @@ public class ChecklistService {
         checklist.setHora(LocalTime.now());
         checklist.setKilometraje(kilometraje);
 
+        boolean tieneNoCumple = items.stream()
+                .anyMatch(item -> item.getEstado().equalsIgnoreCase("NO_CUMPLE"));
+
+        boolean tieneObservacion = items.stream()
+                .anyMatch(item -> item.getEstado().equalsIgnoreCase("OBSERVACION"));
+
         boolean fallaCritica = items.stream()
-                .anyMatch(item -> item.isEsCritico() && item.getEstado().equalsIgnoreCase("FAIL"));
+                .anyMatch(item -> item.isEsCritico() && item.getEstado().equalsIgnoreCase("NO_CUMPLE"));
 
         if (fallaCritica) {
-            checklist.setEstadoFinal("RECHAZADO");
+            checklist.setEstadoFinal("BLOQUEADO");
             vehiculo.setHabilitado(false);
+
+        } else if (tieneNoCumple) {
+            checklist.setEstadoFinal("NO_HABILITADO");
+            vehiculo.setHabilitado(false);
+
+        } else if (tieneObservacion) {
+            checklist.setEstadoFinal("OBSERVADO");
+            vehiculo.setHabilitado(true);
+
         } else {
             checklist.setEstadoFinal("APROBADO");
             vehiculo.setHabilitado(true);
         }
+        vehiculo.setEstado(checklist.getEstadoFinal());
 
         // guardar cambios en vehículo
         vehiculoRepository.save(vehiculo);

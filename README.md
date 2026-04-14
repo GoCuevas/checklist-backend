@@ -1,109 +1,75 @@
-# 🚧 Checklist Vehicular - Backend
+# 🚢 MAD Checklist Backend
 
-API REST para la gestión de checklists pre-operacionales de vehículos en entornos industriales (minería, logística, transporte).
+Backend del sistema de checklists de vehículos para el proyecto **MAD (Maritime Agent Dashboard)**.
 
----
+## 🧠 Descripción
 
-## 🚀 Funcionalidades
+Este servicio permite gestionar inspecciones de vehículos, evaluando su estado operativo en base a checklist estructurado.
 
-* Registro de vehículos
-* Creación de checklist por vehículo
-* Evaluación automática:
+El sistema determina automáticamente el estado final del vehículo según reglas de negocio:
 
-  * 🟢 APROBADO (sin fallas críticas)
-  * 🔴 RECHAZADO (con fallas críticas)
-* Identificación de ítems críticos
-* Registro de observaciones por ítem
-* Actualización automática del estado del vehículo (habilitado / bloqueado)
+* ✅ APROBADO → Todos los ítems OK
+* 🟡 OBSERVADO → Existen observaciones
+* 🔴 NO_HABILITADO → Ítems no críticos fallan
+* ⛔ BLOQUEADO → Falla crítica detectada
 
----
+## ⚙️ Tecnologías
 
-## 🛠️ Tecnologías
-
-* Java 21
+* Java 17
 * Spring Boot
-* Spring Data JPA / Hibernate
+* Hibernate / JPA
 * PostgreSQL
-* Maven
 
----
+## 🔥 Lógica principal
 
-## 📦 Estructura del proyecto
+El estado final se calcula en base a:
 
-* `controller` → Endpoints REST
-* `service` → Lógica de negocio
-* `repository` → Acceso a datos
-* `model` → Entidades JPA
-* `dto` → Transferencia de datos
+* Estado de cada ítem (`OK`, `OBSERVACION`, `NO_CUMPLE`)
+* Identificación de ítems críticos
 
----
+```java
+boolean fallaCritica = items.stream()
+    .anyMatch(item -> item.isEsCritico() && item.getEstado().equalsIgnoreCase("NO_CUMPLE"));
+```
 
-## 🔌 Endpoints principales
+## 📡 Endpoint principal
 
-### Vehículos
+### Crear checklist
 
-* `GET /vehiculos` → Listar vehículos
-* `POST /vehiculos` → Crear vehículo
-* `GET /vehiculos/{id}/estado` → Estado del vehículo (habilitado/bloqueado)
+POST `/checklists`
 
-### Checklists
-
-* `POST /checklists` → Crear checklist
-* `GET /checklists/{id}` → Obtener checklist
-
----
-
-## 📥 Ejemplo de request
+#### Body ejemplo:
 
 ```json
 {
   "vehiculoId": 1,
-  "kilometraje": 120000,
+  "kilometraje": 100000,
   "items": [
     {
       "nombreItem": "Frenos",
-      "estado": "FAIL",
+      "estado": "NO_CUMPLE",
       "esCritico": true
     }
   ]
 }
 ```
 
----
+## 📊 Resultado
 
-## 📤 Ejemplo de respuesta
+El sistema:
 
-```json
-{
-  "estadoFinal": "RECHAZADO",
-  "vehiculo": {
-    "habilitado": false
-  }
-}
-```
+* Guarda el checklist
+* Calcula el estado final
+* Actualiza el estado del vehículo
+* Habilita o bloquea su uso
 
----
+## 🚀 Futuras mejoras
 
-## 🌐 Frontend
-
-Interfaz web disponible en:
-
-👉 https://github.com/GoCuevas/checklist-frontend
-
----
-
-## 🎯 Estado del proyecto
-
-MVP funcional con lógica de negocio completa, listo para integración y despliegue en la nube.
-
----
-
-## 🚀 Próximas mejoras
-
-* Subida de imágenes (evidencia)
-* Historial de checklists
 * Autenticación de usuarios
-* Dashboard de monitoreo
-* Integración con sistemas externos
+* Historial de checklists por vehículo
+* Alertas automáticas
+* Integración con sistemas externos (clima, tracking, etc.)
 
 ---
+
+Desarrollado como parte del ecosistema **MAD**
